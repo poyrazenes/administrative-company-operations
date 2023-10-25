@@ -1,0 +1,15 @@
+{
+    "name": "poyrazenes/administrative-company-operations",
+    "autoload": {
+        "psr-4": {
+            "Poyrazenes\\AdministrativeCompanyOperations\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Enes Poyraz",
+            "email": "enes.poyraz@4alabs.io"
+        }
+    ],
+    "require": {}
+}
