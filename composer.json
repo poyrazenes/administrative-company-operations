@@ -1,5 +1,8 @@
 {
     "name": "poyrazenes/administrative-company-operations",
+    "description": "trial project",
+    "type": "project",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Poyrazenes\\AdministrativeCompanyOperations\\": "src/"
@@ -11,5 +14,13 @@
             "email": "enes.poyraz@4alabs.io"
         }
     ],
-    "require": {}
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Poyrazenes\\AdministrativeCompanyOperations\\Providers\\AdministrativeCompanyOperationsServiceProvider"
+            ]
+        }
+    },
+    "require": {},
+    "minimum-stability": "dev"
 }
