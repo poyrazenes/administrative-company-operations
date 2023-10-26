@@ -17,7 +17,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Poyrazenes\\AdministrativeCompanyOperations\\Providers\\AdministrativeCompanyOperationsServiceProvider"
+                "Providers\\AdministrativeCompanyOperationsServiceProvider"
             ]
         }
     },
