@@ -13,6 +13,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('/administrative-company-operations')
+    ->namespace('Poyrazenes\\AdministrativeCompanyOperations\\Controllers')
+    ->group(function () {
+        Route::redirect('/', '/administrative-company-operations/add-new-operation');
+
+        Route::prefix('/add-new-operation')->group(function () {
+            Route::get('/', 'AdministrativeCompanyOperationsController@viewAddNewOperation');
+            Route::post('/', 'AdministrativeCompanyOperationsController@addNewOperation');
+        });
+        Route::prefix('/verify-operation')->group(function () {
+            Route::get('/', 'AdministrativeCompanyOperationsController@viewVerifyOperation');
+            Route::post('/', 'AdministrativeCompanyOperationsController@verifyOperation');
+        });
+    });
+
 Route::prefix('/administrative-company-operations')->group(function () {
     Route::redirect('/', '/administrative-company-operations/add-new-operation');
 
