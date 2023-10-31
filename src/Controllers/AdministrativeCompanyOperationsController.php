@@ -2,16 +2,15 @@
 
 namespace Poyrazenes\AdministrativeCompanyOperations\Controllers;
 
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Validation\ValidationException;
+
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
-use Poyrazenes\AdministrativeCompanyOperations\Mail\AdministrativeCompanyOperationVerificationCode;
 
 class AdministrativeCompanyOperationsController extends Controller
 {
