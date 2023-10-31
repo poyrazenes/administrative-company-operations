@@ -13,14 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('/administrative-company-operations')
+Route::prefix('/4a-labs-administrative-company-operations')
     ->name('adm-comp-ops.')
     ->middleware([
         \Illuminate\Session\Middleware\StartSession::class
     ])
     ->namespace('Poyrazenes\AdministrativeCompanyOperations\Controllers')
     ->group(function () {
-        Route::redirect('/', '/administrative-company-operations/add-new-operation');
+        Route::redirect('/', '/4a-labs-administrative-company-operations/add-new-operation');
 
         Route::prefix('/add-new-operation')->group(function () {
             Route::get('/', 'AdministrativeCompanyOperationsController@viewAddNewOperation')
