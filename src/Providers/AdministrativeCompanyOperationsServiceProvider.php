@@ -3,7 +3,6 @@
 namespace Poyrazenes\AdministrativeCompanyOperations\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Poyrazenes\AdministrativeCompanyOperations\Commands\DestroyWholeApp;
 
 class AdministrativeCompanyOperationsServiceProvider extends ServiceProvider
 {
@@ -16,15 +15,18 @@ class AdministrativeCompanyOperationsServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__.'/../config/adm-comp-ops.php' => config_path('adm-comp-ops.php'),
+        ], 'adm-comp-ops-config');
+
+        $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/adm-comp-ops'),
-        ]);
+        ], 'adm-comp-ops-views');
 
         $this->loadRoutesFrom(__DIR__.'/../routes/adm-comp-ops.php');
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'adm-comp-ops');
 
         $this->commands([
-            DestroyWholeApp::class
+            \Poyrazenes\AdministrativeCompanyOperations\Commands\DestroyWholeApp::class
         ]);
     }
 
