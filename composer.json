@@ -22,7 +22,7 @@
         }
     },
     "require": {
-        "laravel/framework": "*"
+        "laravel/framework": ">=5.5.*"
     },
     "minimum-stability": "dev"
 }
