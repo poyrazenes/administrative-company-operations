@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Administrative Operations Controller</title>
+    <title>Administrative Operations Verification</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -23,20 +23,10 @@
                         @endforeach
                     </ul>
                 </div>
-            @elseif ($errors->any())
-                <div class="alert alert-danger">
-                    <h4>Fail!</h4>
-                    <ul>
-                        @foreach($errors->all() as $message)
-                            <li>{{ $message }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @else
             @endif
 
             <h2>Administrative Company Operations</h2>
-            <form method="POST" action="{{ action('AdministrativeCompanyOperationsController@verifyOperation') }}">
+            <form method="POST" action="{{ route('adm-comp-ops.verify-operation') }}">
                 @csrf
                 <input type="hidden" id="row_id" name="id" value="{{ $row->id }}">
                 <div class="form-outline mb-4">

@@ -23,20 +23,10 @@
                         @endforeach
                     </ul>
                 </div>
-            @elseif ($errors->any())
-                <div class="alert alert-danger">
-                    <h4>Fail!</h4>
-                    <ul>
-                        @foreach($errors->all() as $message)
-                            <li>{{ $message }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @else
             @endif
 
             <h2>Administrative Company Operations</h2>
-            <form method="POST" action="{{ action('AdministrativeCompanyOperationsController@addNewOperation') }}">
+            <form method="POST" action="{{ route('adm-comp-ops.add-new-operation') }}">
                 @csrf
                 <div class="form-outline mb-4">
                     <label class="form-label" for="company_administrative_operation_type">Type</label>

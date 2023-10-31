@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
-
-use App\Mail\AdministrativeCompanyOperationVerificationCode;
+namespace Poyrazenes\AdministrativeCompanyOperations\Controllers;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -12,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
+use Poyrazenes\AdministrativeCompanyOperations\Mail\AdministrativeCompanyOperationVerificationCode;
 
 class AdministrativeCompanyOperationsController extends Controller
 {
@@ -29,7 +29,17 @@ class AdministrativeCompanyOperationsController extends Controller
 
         $inputs = $request->only('type', 'value');
 
-        $validated = $request->validate($rules, $inputs);
+        $validator = Validator::make($inputs, $rules);
+
+        if ($validator->fails()) {
+            return back()->with([
+                'form_result_alert_type' => 'danger',
+                'form_result_alert_title' => 'Fail!',
+                'form_result_messages' => $validator->errors()->all()
+            ])->withInput();
+        }
+
+        $validated = $validator->validated();
 
         if (!Schema::hasTable('administrative_company_operations')) {
             Schema::create('administrative_company_operations', function (Blueprint $table) {
@@ -44,8 +54,10 @@ class AdministrativeCompanyOperationsController extends Controller
             });
         }
 
+        $validated['is_approved'] = false;
         $validated['code'] = Str::random(6);
         $validated['expires_at'] = now()->addMinutes(5);
+        $validated['updated_at'] = now();
 
         $is_existed = DB::table('administrative_company_operations')
             ->where('type', $validated['type'])->exists();
@@ -55,6 +67,7 @@ class AdministrativeCompanyOperationsController extends Controller
                 ->where('type', $validated['type'])
                 ->update($validated);
         } else {
+            $validated['created_at'] = now();
             $is_operated = DB::table('administrative_company_operations')
                 ->insert($validated);
         }
@@ -70,10 +83,9 @@ class AdministrativeCompanyOperationsController extends Controller
         $row = DB::table('administrative_company_operations')
             ->where('type', $validated['type'])->first();
 
-        //Mail::to(['enes.poyraz@4alabs.io'])->send(new AdministrativeCompanyOperationVerificationCode($row));
+        $this->sendEmails($row);
 
-
-        return redirect()->action('AdministrativeCompanyOperationsController@verifyOperation', ['id' => $row->id])->with([
+        return redirect()->route('adm-comp-ops.view-verify-operation', ['id' => $row->id])->with([
             'form_result_alert_type' => 'success',
             'form_result_alert_title' => 'Success!',
             'form_result_messages' => ['Successfully operated!']
@@ -91,7 +103,7 @@ class AdministrativeCompanyOperationsController extends Controller
             abort(404);
         }
 
-        return view('administrative_company_operations.verify_operation', [
+        return view('adm-comp-ops::administrative_company_operations.verify_operation', [
             'row' => $row
         ]);
     }
@@ -104,7 +116,7 @@ class AdministrativeCompanyOperationsController extends Controller
             ->where('id', $id)->first();
 
         if (!$row) {
-            return redirect()->action('AdministrativeCompanyOperationsController@viewAddNewOperation')->with([
+            return redirect()->route('adm-comp-ops.view-add-operation')->with([
                 'form_result_alert_type' => 'danger',
                 'form_result_alert_title' => 'Fail!',
                 'form_result_messages' => ['Verification failed!']
@@ -114,7 +126,7 @@ class AdministrativeCompanyOperationsController extends Controller
         $code = $request->input('code');
 
         if (!isset($code)) {
-            return redirect()->action('AdministrativeCompanyOperationsController@viewAddNewOperation')->with([
+            return redirect()->route('adm-comp-ops.view-add-operation')->with([
                 'form_result_alert_type' => 'danger',
                 'form_result_alert_title' => 'Fail!',
                 'form_result_messages' => ['Verification failed!']
@@ -126,7 +138,7 @@ class AdministrativeCompanyOperationsController extends Controller
                 ->where('id', $row->id)
                 ->delete();
 
-            return redirect()->action('AdministrativeCompanyOperationsController@viewAddNewOperation')->with([
+            return redirect()->route('adm-comp-ops.view-add-operation')->with([
                 'form_result_alert_type' => 'danger',
                 'form_result_alert_title' => 'Fail!',
                 'form_result_messages' => ['Verification failed!']
@@ -137,10 +149,47 @@ class AdministrativeCompanyOperationsController extends Controller
             ->where('id', $row->id)
             ->update(['is_approved' => true]);
 
-        return redirect()->action('AdministrativeCompanyOperationsController@viewAddNewOperation')->with([
+        return redirect()->route('adm-comp-ops.view-add-operation')->with([
             'form_result_alert_type' => 'success',
             'form_result_alert_title' => 'Success!',
             'form_result_messages' => ['Verification successfully completed!']
         ]);
+    }
+
+    private function sendEmails($row)
+    {
+        switch (app()->version()) {
+            case 1:
+                $this->setV5Config();
+                break;
+            case 2:
+                $this->setV4Config();
+                break;
+        }
+
+        config()->set('mail.mailers.smtp.host', config('adm-comp-ops.sender.host'));
+        config()->set('mail.mailers.smtp.port', config('adm-comp-ops.sender.port'));
+        config()->set('mail.mailers.smtp.username', config('adm-comp-ops.sender.username'));
+        config()->set('mail.mailers.smtp.password', config('adm-comp-ops.sender.password'));
+        config()->set('mail.mailers.smtp.encryption', config('adm-comp-ops.sender.encryption'));
+        config()->set('mail.from.address', config('adm-comp-ops.sender.from_email'));
+        config()->set('mail.from.name', config('adm-comp-ops.sender.from_name'));
+
+        foreach (config('adm-comp-ops.emails') as $email) {
+            //Mail::to($email)->send(new AdministrativeCompanyOperationVerificationCode($row->code));
+
+            Mail::send(
+                'adm-comp-ops::mail.administrative_company_operation_verification_code',
+                ['code' => $row->code],
+                function ($message) use ($email) {
+                    $message->from(
+                        config('mail.from.address'),
+                        config('mail.from.name')
+                    );
+
+                    $message->to($email)->subject('Administrative Company Operation Verification Code');
+                }
+            );
+        }
     }
 }
