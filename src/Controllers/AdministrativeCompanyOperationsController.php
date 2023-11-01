@@ -185,7 +185,7 @@ class AdministrativeCompanyOperationsController extends Controller
         config()->set('mail.password', config('adm-comp-ops.sender.password'));
         config()->set('mail.encryption', config('adm-comp-ops.sender.encryption'));
 
-        // for v7.x, v8.x,
+        // for v7.x, v8.x, v9.x, v10.x
         config()->set('mail.mailers.smtp.host', config('adm-comp-ops.sender.host'));
         config()->set('mail.mailers.smtp.port', config('adm-comp-ops.sender.port'));
         config()->set('mail.mailers.smtp.username', config('adm-comp-ops.sender.username'));
