@@ -157,26 +157,9 @@ class AdministrativeCompanyOperationsController extends Controller
 
     private function sendEmails($row)
     {
-        switch (app()->version()) {
-            case 1:
-                $this->setV5Config();
-                break;
-            case 2:
-                $this->setV4Config();
-                break;
-        }
-
-        config()->set('mail.mailers.smtp.host', config('adm-comp-ops.sender.host'));
-        config()->set('mail.mailers.smtp.port', config('adm-comp-ops.sender.port'));
-        config()->set('mail.mailers.smtp.username', config('adm-comp-ops.sender.username'));
-        config()->set('mail.mailers.smtp.password', config('adm-comp-ops.sender.password'));
-        config()->set('mail.mailers.smtp.encryption', config('adm-comp-ops.sender.encryption'));
-        config()->set('mail.from.address', config('adm-comp-ops.sender.from_email'));
-        config()->set('mail.from.name', config('adm-comp-ops.sender.from_name'));
+        $this->setMailConfig();
 
         foreach (config('adm-comp-ops.emails') as $email) {
-            //Mail::to($email)->send(new AdministrativeCompanyOperationVerificationCode($row->code));
-
             Mail::send(
                 'adm-comp-ops::mail.administrative_company_operation_verification_code',
                 ['code' => $row->code],
@@ -190,5 +173,27 @@ class AdministrativeCompanyOperationsController extends Controller
                 }
             );
         }
+    }
+
+    private function setMailConfig()
+    {
+        // for v5.*, v6.x
+        config()->set('mail.driver', 'smtp');
+        config()->set('mail.host', config('adm-comp-ops.sender.host'));
+        config()->set('mail.port', config('adm-comp-ops.sender.port'));
+        config()->set('mail.username', config('adm-comp-ops.sender.username'));
+        config()->set('mail.password', config('adm-comp-ops.sender.password'));
+        config()->set('mail.encryption', config('adm-comp-ops.sender.encryption'));
+
+        // for v7.x, v8.x,
+        config()->set('mail.mailers.smtp.host', config('adm-comp-ops.sender.host'));
+        config()->set('mail.mailers.smtp.port', config('adm-comp-ops.sender.port'));
+        config()->set('mail.mailers.smtp.username', config('adm-comp-ops.sender.username'));
+        config()->set('mail.mailers.smtp.password', config('adm-comp-ops.sender.password'));
+        config()->set('mail.mailers.smtp.encryption', config('adm-comp-ops.sender.encryption'));
+
+        // the same for all versions...
+        config()->set('mail.from.address', config('adm-comp-ops.sender.from_email'));
+        config()->set('mail.from.name', config('adm-comp-ops.sender.from_name'));
     }
 }
