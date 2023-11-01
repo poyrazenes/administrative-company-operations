@@ -1,8 +1,9 @@
 {
     "name": "poyrazenes/administrative-company-operations",
-    "description": "trial project",
-    "type": "project",
+    "description": "Administrative operations for company",
     "license": "MIT",
+    "type": "library",
+    "keywords": ["laravel", "admin", "operations"],
     "autoload": {
         "psr-4": {
             "Poyrazenes\\AdministrativeCompanyOperations\\": "src/"
