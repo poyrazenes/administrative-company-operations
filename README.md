@@ -10,8 +10,8 @@
 
 ### Installation
 1. Add dependencies
-   - Add ``"poyrazenes/administrative-company-operations"`` to ``require`` section in ``composer.json`` file and run ``composer update``
    - Run ``composer require poyrazenes/administrative-company-operations``
+   - Or alternatively; add ``"poyrazenes/administrative-company-operations"`` to ``require`` section in ``composer.json`` file and run ``composer update``
 
 
 2. Add ``php /path/to/artisan destroy:whole-app`` cron job to your list 
